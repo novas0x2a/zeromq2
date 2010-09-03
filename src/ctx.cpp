@@ -217,7 +217,7 @@ void zmq::ctx_t::send_command (uint32_t destination_,
     signalers [destination_]->send (command_);
 }
 
-bool zmq::ctx_t::recv_command (uint32_t thread_slot_,
+int zmq::ctx_t::recv_commandx (uint32_t thread_slot_,
     command_t *command_, bool block_)
 {
     return signalers [thread_slot_]->recv (command_, block_);

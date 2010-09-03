@@ -66,7 +66,7 @@ namespace zmq
         void send_command (uint32_t destination_, const command_t &command_);
 
         //  Receive command from another thread.
-        bool recv_command (uint32_t thread_slot_, command_t *command_,
+        int recv_commandx (uint32_t thread_slot_, command_t *command_,
             bool block_);
 
         //  Returns the I/O thread that is the least busy at the moment.

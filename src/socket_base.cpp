@@ -348,10 +348,8 @@ int zmq::socket_base_t::connect (const char *addr_)
 int zmq::socket_base_t::send (::zmq_msg_t *msg_, int flags_)
 {
     //  Process pending commands, if any.
-    if (unlikely (!app_thread->process_commands (false, true))) {
-        errno = ETERM;
+    if (unlikely (app_thread->process_commands (false, true) != 0))
         return -1;
-    }
 
     //  At this point we impose the MORE flag on the message.
     if (flags_ & ZMQ_SNDMORE)
@@ -372,10 +370,8 @@ int zmq::socket_base_t::send (::zmq_msg_t *msg_, int flags_)
     while (rc != 0) {
         if (errno != EAGAIN)
             return -1;
-        if (unlikely (!app_thread->process_commands (true, false))) {
-            errno = ETERM;
+        if (unlikely (app_thread->process_commands (true, false) != 0))
             return -1;
-        }
         rc = xsend (msg_, flags_);
     }
     return 0;
@@ -396,10 +392,8 @@ int zmq::socket_base_t::recv (::zmq_msg_t *msg_, int flags_)
     //  described above) from the one used by 'send'. This is because counting
     //  ticks is more efficient than doing rdtsc all the time.
     if (++ticks == inbound_poll_rate) {
-        if (unlikely (!app_thread->process_commands (false, false))) {
-            errno = ETERM;
+        if (unlikely (app_thread->process_commands (false, false) != 0))
             return -1;
-        }
         ticks = 0;
     }
 
@@ -420,10 +414,8 @@ int zmq::socket_base_t::recv (::zmq_msg_t *msg_, int flags_)
     if (flags_ & ZMQ_NOBLOCK) {
         if (errno != EAGAIN)
             return -1;
-        if (unlikely (!app_thread->process_commands (false, false))) {
-            errno = ETERM;
+        if (unlikely (app_thread->process_commands (false, false) != 0))
             return -1;
-        }
         ticks = 0;
 
         rc = xrecv (msg_, flags_);
@@ -440,10 +432,8 @@ int zmq::socket_base_t::recv (::zmq_msg_t *msg_, int flags_)
     while (rc != 0) {
         if (errno != EAGAIN)
             return -1;
-        if (unlikely (!app_thread->process_commands (true, false))) {
-            errno = ETERM;
+        if (unlikely (app_thread->process_commands (true, false) != 0))
             return -1;
-        }
         rc = xrecv (msg_, flags_);
         ticks = 0;
     }

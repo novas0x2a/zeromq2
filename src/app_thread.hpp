@@ -48,9 +48,8 @@ namespace zmq
         //  Processes commands sent to this thread (if any). If 'block' is
         //  set to true, returns only after at least one command was processed.
         //  If throttle argument is true, commands are processed at most once
-        //  in a predefined time period. The function returns false is the
-        //  associated context was terminated, true otherwise.
-        bool process_commands (bool block_, bool throttle_);
+        //  in a predefined time period.
+        int process_commands (bool block_, bool throttle_);
 
         //  Create a socket of a specified type.
         class socket_base_t *create_socket (int type_);

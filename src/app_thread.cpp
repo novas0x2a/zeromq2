@@ -80,13 +80,13 @@ zmq::signaler_t *zmq::app_thread_t::get_signaler ()
     return &signaler;
 }
 
-bool zmq::app_thread_t::process_commands (bool block_, bool throttle_)
+int zmq::app_thread_t::process_commands (bool block_, bool throttle_)
 {
-    bool received;
+    int rc;
     command_t cmd;
     if (block_) {
-        received = signaler.recv (&cmd, true);
-        zmq_assert (received);
+        rc = signaler.recv (&cmd, true);
+        zmq_assert (rc == 0);
     }   
     else {
 
@@ -113,23 +113,38 @@ bool zmq::app_thread_t::process_commands (bool block_, bool throttle_)
 
             //  Check whether certain time have elapsed since last command
             //  processing.
-            if (current_time - last_processing_time <= max_command_delay)
-                return !terminated;
+            if (current_time - last_processing_time <= max_command_delay) {
+                if (terminated) {
+                    errno = ETERM;
+                    return -1;
+                }
+                return 0;
+            }
             last_processing_time = current_time;
         }
 #endif
 
         //  Check whether there are any commands pending for this thread.
-        received = signaler.recv (&cmd, false);
+        rc = signaler.recv (&cmd, false);
     }
 
     //  Process all the commands available at the moment.
-    while (received) {
+    while (true) {
+        if (rc == -1 && errno == EAGAIN)
+            break;
+        if (rc == -1 && errno == EINTR)
+            return -1;
+        zmq_assert (rc == 0);
         cmd.destination->process_command (cmd);
-        received = signaler.recv (&cmd, false);
+        rc = signaler.recv (&cmd, false);
     }
 
-    return !terminated;
+    if (terminated) {
+        errno = ETERM;
+        return -1;
+    }
+
+    return 0;
 }
 
 zmq::socket_base_t *zmq::app_thread_t::create_socket (int type_)
