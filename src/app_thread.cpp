@@ -86,6 +86,8 @@ int zmq::app_thread_t::process_commands (bool block_, bool throttle_)
     command_t cmd;
     if (block_) {
         rc = signaler.recv (&cmd, true);
+        if (rc == -1 && errno == EINTR)
+            return -1;
         zmq_assert (rc == 0);
     }   
     else {
