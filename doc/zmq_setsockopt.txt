@@ -276,6 +276,18 @@ Option value unit:: connections
 Default value:: 100
 Applicable socket types:: all, only for connection-oriented transports.
 
+ZMQ_ASSERT_FUNC: Set fatal error handler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The 'ZMQ_ASSERT_FUNC' option shall set the current fatal error handler
+for the specified 'socket'. This function is called when an unrecoverable
+condition is detected. It must not return.
+
+[horizontal]
+Option value type:: zmq::assert_t
+Option value unit:: N/A
+Default value:: zmq::default_assert_fun
+Applicable socket types:: all
+
 
 RETURN VALUE
 ------------

@@ -39,7 +39,8 @@ zmq::options_t::options_t () :
     backlog (100),
     requires_in (false),
     requires_out (false),
-    immediate_connect (true)
+    immediate_connect (true),
+    assert_fun (zmq::default_assert_fun)
 {
 }
 
@@ -158,6 +159,14 @@ int zmq::options_t::setsockopt (int option_, const void *optval_,
             return -1;
         }
         backlog = *((int*) optval_);
+        return 0;
+
+    case ZMQ_ASSERT_FUNC:
+        if (optvallen_ != sizeof (zmq::assert_t)) {
+          errno = EINVAL;
+          return -1;
+        }
+        assert_fun = *((zmq::assert_t*) optval_);
         return 0;
 
     }
@@ -286,6 +295,15 @@ int zmq::options_t::getsockopt (int option_, void *optval_, size_t *optvallen_)
         }
         *((int*) optval_) = backlog;
         *optvallen_ = sizeof (int);
+        return 0;
+
+    case ZMQ_ASSERT_FUNC:
+        if (*optvallen_ < sizeof (zmq::assert_t)) {
+          errno = EINVAL;
+          return -1;
+        }
+        *((zmq::assert_t*) optval_) = assert_fun;
+        *optvallen_ = sizeof(zmq::assert_t);
         return 0;
 
     }

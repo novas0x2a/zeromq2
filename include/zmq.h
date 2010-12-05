@@ -202,6 +202,7 @@ ZMQ_EXPORT int zmq_term (void *context);
 #define ZMQ_LINGER 17
 #define ZMQ_RECONNECT_IVL 18
 #define ZMQ_BACKLOG 19
+#define ZMQ_ASSERT_FUNC 20
 
 /*  Send/recv options.                                                        */
 #define ZMQ_NOBLOCK 1

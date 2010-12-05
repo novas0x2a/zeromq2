@@ -23,6 +23,7 @@
 #include "stddef.h"
 #include "stdint.hpp"
 #include "blob.hpp"
+#include "err.hpp"
 
 namespace zmq
 {
@@ -73,6 +74,10 @@ namespace zmq
         //  is not aware of the peer's identity, however, it is able to send
         //  messages straight away.
         bool immediate_connect;
+
+        // This function is called when a fatal error happens on a socket.
+        // It must not return.
+        zmq::assert_t assert_fun;
     };
 
 }

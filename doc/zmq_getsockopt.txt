@@ -321,6 +321,18 @@ Option value unit:: N/A (flags)
 Default value:: N/A
 Applicable socket types:: all
 
+ZMQ_ASSERT_FUNC: Retrieve fatal error handler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The 'ZMQ_ASSERT_FUNC' option shall retrieve the current fatal error handler
+for the specified 'socket'. The returned value is a function pointer that,
+when calls, does not return.
+
+[horizontal]
+Option value type:: zmq::assert_t
+Option value unit:: N/A
+Default value:: zmq::default_assert_fun
+Applicable socket types:: all
+
 
 RETURN VALUE
 ------------

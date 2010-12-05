@@ -38,6 +38,15 @@
 namespace zmq
 {
     const char *errno_to_string (int errno_);
+
+    enum error_ctx_t {
+      ZMQ_ERR_CONTEXT,
+      ZMQ_ERR_SOCKET,
+      ZMQ_ERR_OTHER
+    };
+
+    typedef void (*assert_t)(error_ctx_t ctx, const char *msg, const char *file, int line);
+    void default_assert_fun(error_ctx_t ctx, const char *msg, const char *file, int line);
 }
 
 #ifdef ZMQ_HAVE_WINDOWS

@@ -63,6 +63,11 @@ const char *zmq::errno_to_string (int errno_)
     }
 }
 
+void zmq::default_assert_fun(error_ctx_t /*ctx*/, const char *msg, const char *file, int line) {
+  fprintf (stderr, "Assertion failed: %s (%s:%d)\n", msg, file, line);
+  abort();
+}
+
 #ifdef ZMQ_HAVE_WINDOWS
 
 const char *zmq::wsa_error()
